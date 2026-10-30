@@ -211,13 +211,13 @@ This project can be deployed as one Node.js web service: Express serves both the
 
 ### 3. Deploy the web service
 
-1. In Render, create a **Web Service** connected to the GitHub repository and select the production branch.
+1. In Render, use **New > Blueprint** and select this repository to apply `render.yaml`. The Blueprint generates `JWT_SECRET` and prompts for the other service values. Set `CLIENT_ORIGIN` and `APP_URL` to the final service origin. Alternatively, create a **Web Service** manually, connect the GitHub repository, and select the production branch.
 2. Configure:
 
    | Setting | Value |
    | --- | --- |
    | Runtime | Node |
-   | Build command | `npm install && npm run build` |
+   | Build command | `npm ci --include=dev && npm run build` |
    | Start command | `npm start` |
    | Health-check path | `/api/health` |
 
