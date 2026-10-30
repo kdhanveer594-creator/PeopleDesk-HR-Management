@@ -1,0 +1,40 @@
+{
+  "name": "peopledesk-hr-management",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c blue,green \"npm:server:dev\" \"npm:client:dev\"",
+    "client:dev": "vite --host 0.0.0.0",
+    "server:dev": "node --watch server/src/index.js",
+    "build": "vite build",
+    "start": "node server/src/index.js",
+    "seed:admin": "node server/src/scripts/createAdmin.js",
+    "seed:demo": "node server/src/scripts/seedDemoData.js",
+    "seed:employees": "node server/src/scripts/seedEmployees.js",
+    "create:hr-user": "node server/src/scripts/createHrUser.js",
+    "create:employee-user": "node server/src/scripts/createEmployeeUser.js",
+    "test": "node --test server/test/*.test.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bootstrap": "^5.3.8",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.1",
+    "nodemailer": "^10.2.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.9.4",
+    "recharts": "^3.10.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "concurrently": "^9.2.1",
+    "vite": "^7.1.9"
+  }
+}
