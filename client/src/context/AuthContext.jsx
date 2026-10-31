@@ -1,4 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { api, setToken } from "../lib/api.js";
 
 const AuthContext = createContext(null);
@@ -17,13 +24,21 @@ export function AuthProvider({ children }) {
     window.addEventListener("peopledesk:auth-expired", handleExpiredSession);
     if (!localStorage.getItem("peopledesk_token")) {
       setLoading(false);
-      return () => window.removeEventListener("peopledesk:auth-expired", handleExpiredSession);
+      return () =>
+        window.removeEventListener(
+          "peopledesk:auth-expired",
+          handleExpiredSession,
+        );
     }
     api("/auth/me")
       .then((result) => setUser(result.user))
       .catch(() => clearSession())
       .finally(() => setLoading(false));
-    return () => window.removeEventListener("peopledesk:auth-expired", handleExpiredSession);
+    return () =>
+      window.removeEventListener(
+        "peopledesk:auth-expired",
+        handleExpiredSession,
+      );
   }, [clearSession]);
 
   const login = useCallback(async (email, password, portal) => {
@@ -45,7 +60,10 @@ export function AuthProvider({ children }) {
     }
   }, [clearSession]);
 
-  const value = useMemo(() => ({ user, loading, login, logout }), [user, loading, login, logout]);
+  const value = useMemo(
+    () => ({ user, loading, login, logout }),
+    [user, loading, login, logout],
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

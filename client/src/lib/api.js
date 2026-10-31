@@ -16,7 +16,10 @@ export async function api(path, options = {}) {
   if (options.body && !(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
-  const response = await fetch(`${API_BASE}/api${path}`, { ...options, headers });
+  const response = await fetch(`${API_BASE}/api${path}`, {
+    ...options,
+    headers,
+  });
   const result = await response.json().catch(() => ({}));
   if (!response.ok) {
     if (response.status === 401 && path !== "/auth/login") {

@@ -1,4 +1,3 @@
-
 import "dotenv/config";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
@@ -17,12 +16,17 @@ import {
 
 const { MONGODB_URI } = process.env;
 const demoPassword = process.env.DEMO_EMPLOYEE_PASSWORD || "Demo-Employee-123";
-const hrEmail = (process.env.HR_EMAIL || "hr@peopledesk.local").trim().toLowerCase();
+const hrEmail = (process.env.HR_EMAIL || "hr@peopledesk.local")
+  .trim()
+  .toLowerCase();
 const hrPassword = process.env.HR_PASSWORD || "Demo-HR-123456";
 
-if (!MONGODB_URI) throw new Error("Set MONGODB_URI before running demo seeding.");
-if (demoPassword.length < 12) throw new Error("DEMO_EMPLOYEE_PASSWORD must be at least 12 characters.");
-if (hrPassword.length < 12) throw new Error("HR_PASSWORD must be at least 12 characters.");
+if (!MONGODB_URI)
+  throw new Error("Set MONGODB_URI before running demo seeding.");
+if (demoPassword.length < 12)
+  throw new Error("DEMO_EMPLOYEE_PASSWORD must be at least 12 characters.");
+if (hrPassword.length < 12)
+  throw new Error("HR_PASSWORD must be at least 12 characters.");
 
 const employeesToSeed = [
   {
@@ -65,7 +69,8 @@ const employeesToSeed = [
 
 async function upsertUser({ name, email, role, employee, password }) {
   const existing = await User.findOne({ email }).select("+passwordHash");
-  const passwordHash = existing?.passwordHash || await bcrypt.hash(password, 12);
+  const passwordHash =
+    existing?.passwordHash || (await bcrypt.hash(password, 12));
   return User.findOneAndUpdate(
     { email },
     {
@@ -90,8 +95,19 @@ async function main() {
   for (const employeeData of employeesToSeed) {
     const employee = await Employee.findOneAndUpdate(
       { email: employeeData.email },
-      { $set: { ...employeeData, employmentType: "Full-time", status: "Active" } },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+      {
+        $set: {
+          ...employeeData,
+          employmentType: "Full-time",
+          status: "Active",
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      },
     );
     await upsertUser({
       name: employee.name,
@@ -119,7 +135,12 @@ async function main() {
           notes: "Competition demo attendance record",
         },
       },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      },
     );
 
     if (index < 2) {
@@ -137,12 +158,20 @@ async function main() {
             status: "Pending",
           },
         },
-        { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+        {
+          new: true,
+          upsert: true,
+          runValidators: true,
+          setDefaultsOnInsert: true,
+        },
       );
     }
 
     await Payroll.findOneAndUpdate(
-      { employee: employee._id, period: `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, "0")}` },
+      {
+        employee: employee._id,
+        period: `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, "0")}`,
+      },
       {
         $set: {
           baseSalary: employee.salary,
@@ -153,13 +182,23 @@ async function main() {
           processedAt: null,
         },
       },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      },
     );
 
     await LeaveBalance.findOneAndUpdate(
       { employee: employee._id, year: today.getUTCFullYear(), type: "Annual" },
       { $set: { entitlement: 20 } },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      },
     );
 
     await PerformanceReview.findOneAndUpdate(
@@ -167,56 +206,152 @@ async function main() {
       {
         $set: {
           rating: index === 1 ? null : [4, 3, 5, 4][index],
-          feedback: index === 1 ? "Quarterly review in progress." : "Consistent contribution, collaboration, and ownership of team goals.",
+          feedback:
+            index === 1
+              ? "Quarterly review in progress."
+              : "Consistent contribution, collaboration, and ownership of team goals.",
           status: index === 1 ? "In progress" : "Completed",
         },
       },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      },
     );
   }
 
   const openings = [
-    { title: "Senior Product Designer", department: "Design", location: "Remote", employmentType: "Full-time", description: "Shape accessible employee experiences and lead product design across PeopleDesk.", status: "Open" },
-    { title: "Data Analyst", department: "Operations", location: "Hybrid", employmentType: "Full-time", description: "Turn people operations data into clear, actionable insights.", status: "Open" },
-    { title: "Talent Acquisition Partner", department: "HR", location: "On-site", employmentType: "Full-time", description: "Build an inclusive hiring pipeline and a thoughtful candidate experience.", status: "Open" },
-    { title: "QA Engineer", department: "Engineering", location: "Remote", employmentType: "Contract", description: "Improve product quality through reliable testing and release practices.", status: "Closed" },
+    {
+      title: "Senior Product Designer",
+      department: "Design",
+      location: "Remote",
+      employmentType: "Full-time",
+      description:
+        "Shape accessible employee experiences and lead product design across PeopleDesk.",
+      status: "Open",
+    },
+    {
+      title: "Data Analyst",
+      department: "Operations",
+      location: "Hybrid",
+      employmentType: "Full-time",
+      description:
+        "Turn people operations data into clear, actionable insights.",
+      status: "Open",
+    },
+    {
+      title: "Talent Acquisition Partner",
+      department: "HR",
+      location: "On-site",
+      employmentType: "Full-time",
+      description:
+        "Build an inclusive hiring pipeline and a thoughtful candidate experience.",
+      status: "Open",
+    },
+    {
+      title: "QA Engineer",
+      department: "Engineering",
+      location: "Remote",
+      employmentType: "Contract",
+      description:
+        "Improve product quality through reliable testing and release practices.",
+      status: "Closed",
+    },
   ];
   const seededOpenings = [];
   for (const opening of openings) {
-    seededOpenings.push(await JobOpening.findOneAndUpdate(
-      { title: opening.title, department: opening.department },
-      { $set: opening },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
-    ));
+    seededOpenings.push(
+      await JobOpening.findOneAndUpdate(
+        { title: opening.title, department: opening.department },
+        { $set: opening },
+        {
+          new: true,
+          upsert: true,
+          runValidators: true,
+          setDefaultsOnInsert: true,
+        },
+      ),
+    );
   }
 
   const candidates = [
-    { name: "Emma Hart", email: "emma.hart@example.com", position: "Senior Product Designer", department: "Design", stage: "Interview", job: seededOpenings[0]._id, notes: "Strong portfolio and thoughtful product approach.", interviewAt: new Date(Date.now() + 86400000) },
-    { name: "Noah Brooks", email: "noah.brooks@example.com", position: "Data Analyst", department: "Operations", stage: "Screening", job: seededOpenings[1]._id, notes: "Relevant analytics experience; schedule technical screen.", interviewAt: null },
-    { name: "Sara Kim", email: "sara.kim@example.com", position: "Talent Acquisition Partner", department: "HR", stage: "Applied", job: seededOpenings[2]._id, notes: "Experienced in inclusive hiring practices.", interviewAt: null },
+    {
+      name: "Emma Hart",
+      email: "emma.hart@example.com",
+      position: "Senior Product Designer",
+      department: "Design",
+      stage: "Interview",
+      job: seededOpenings[0]._id,
+      notes: "Strong portfolio and thoughtful product approach.",
+      interviewAt: new Date(Date.now() + 86400000),
+    },
+    {
+      name: "Noah Brooks",
+      email: "noah.brooks@example.com",
+      position: "Data Analyst",
+      department: "Operations",
+      stage: "Screening",
+      job: seededOpenings[1]._id,
+      notes: "Relevant analytics experience; schedule technical screen.",
+      interviewAt: null,
+    },
+    {
+      name: "Sara Kim",
+      email: "sara.kim@example.com",
+      position: "Talent Acquisition Partner",
+      department: "HR",
+      stage: "Applied",
+      job: seededOpenings[2]._id,
+      notes: "Experienced in inclusive hiring practices.",
+      interviewAt: null,
+    },
   ];
   for (const candidate of candidates) {
     await Candidate.findOneAndUpdate(
       { email: candidate.email },
       { $set: candidate },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      },
     );
   }
 
   const notificationSamples = [
-    { title: "Demo team loaded", message: "The PeopleDesk competition demo records are ready.", link: "/" },
-    { title: "Leave requests awaiting review", message: "Review the sample leave requests in Leave management.", link: "/leave" },
+    {
+      title: "Demo team loaded",
+      message: "The PeopleDesk competition demo records are ready.",
+      link: "/",
+    },
+    {
+      title: "Leave requests awaiting review",
+      message: "Review the sample leave requests in Leave management.",
+      link: "/leave",
+    },
   ];
   for (const item of notificationSamples) {
     await Notification.findOneAndUpdate(
       { user: hr._id, title: item.title },
       { $set: { ...item, user: hr._id } },
-      { new: true, upsert: true, runValidators: true, setDefaultsOnInsert: true },
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+        setDefaultsOnInsert: true,
+      },
     );
   }
 
-  console.log(`Demo data uploaded. HR: Mihika Sharma (${hr.email}); employees: ${seededEmployees.map(({ name }) => name).join(", ")}; ${openings.length} job openings and ${candidates.length} candidates.`);
-  console.log(`Employee demo password for newly created accounts: ${demoPassword}`);
+  console.log(
+    `Demo data uploaded. HR: Mihika Sharma (${hr.email}); employees: ${seededEmployees.map(({ name }) => name).join(", ")}; ${openings.length} job openings and ${candidates.length} candidates.`,
+  );
+  console.log(
+    `Employee demo password for newly created accounts: ${demoPassword}`,
+  );
 }
 
 try {

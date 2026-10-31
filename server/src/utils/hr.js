@@ -9,18 +9,27 @@ export function calculateHours(checkIn, checkOut) {
 }
 
 export function calculateNetPay(baseSalary, bonus = 0, deductions = 0) {
-  if (![baseSalary, bonus, deductions].every(Number.isFinite) || [baseSalary, bonus, deductions].some((value) => value < 0)) {
-    throw new RangeError("Payroll amounts must be non-negative finite numbers.");
+  if (
+    ![baseSalary, bonus, deductions].every(Number.isFinite) ||
+    [baseSalary, bonus, deductions].some((value) => value < 0)
+  ) {
+    throw new RangeError(
+      "Payroll amounts must be non-negative finite numbers.",
+    );
   }
   const netPay = baseSalary + bonus - deductions;
-  if (netPay < 0) throw new RangeError("Deductions cannot exceed salary and bonus.");
+  if (netPay < 0)
+    throw new RangeError("Deductions cannot exceed salary and bonus.");
   return netPay;
 }
 
 export function calendarDaysWithinYear(startDate, endDate, year) {
   const firstDay = (value) => {
     const date = new Date(value);
-    return Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) / 86400000;
+    return (
+      Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()) /
+      86400000
+    );
   };
   const yearStart = Date.UTC(year, 0, 1) / 86400000;
   const yearEnd = Date.UTC(year + 1, 0, 1) / 86400000 - 1;

@@ -13,7 +13,12 @@ const Dashboard = lazy(() => import("./pages/Dashboard.jsx"));
 const OperationsPage = lazy(() => import("./pages/OperationsPage.jsx"));
 
 function PageLoading() {
-  return <div className="loading-screen"><span className="spinner-border text-primary" /><span>Loading your insights…</span></div>;
+  return (
+    <div className="loading-screen">
+      <span className="spinner-border text-primary" />
+      <span>Loading your insights…</span>
+    </div>
+  );
 }
 
 function ProtectedLayout() {
@@ -37,22 +42,97 @@ export default function App() {
   return (
     <ToastProvider>
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
-        <Route path="/employee-login" element={user ? <Navigate to={user.role === "employee" ? "/employee" : "/" } replace /> : <Login portal="employee" />} />
-        <Route path="/forgot-password" element={user ? <Navigate to={user.role === "employee" ? "/employee" : "/" } replace /> : <ForgotPassword />} />
-        <Route path="/reset-password" element={user ? <Navigate to={user.role === "employee" ? "/employee" : "/" } replace /> : <ResetPassword />} />
+        <Route
+          path="/login"
+          element={user ? <Navigate to="/" replace /> : <Login />}
+        />
+        <Route
+          path="/employee-login"
+          element={
+            user ? (
+              <Navigate
+                to={user.role === "employee" ? "/employee" : "/"}
+                replace
+              />
+            ) : (
+              <Login portal="employee" />
+            )
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            user ? (
+              <Navigate
+                to={user.role === "employee" ? "/employee" : "/"}
+                replace
+              />
+            ) : (
+              <ForgotPassword />
+            )
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            user ? (
+              <Navigate
+                to={user.role === "employee" ? "/employee" : "/"}
+                replace
+              />
+            ) : (
+              <ResetPassword />
+            )
+          }
+        />
         <Route element={<ProtectedLayout />}>
-          <Route index element={<Suspense fallback={<PageLoading />}><Dashboard /></Suspense>} />
-          <Route path="employees" element={<ModulePage moduleKey="employees" />} />
-          <Route path="attendance" element={<ModulePage moduleKey="attendance" />} />
+          <Route
+            index
+            element={
+              <Suspense fallback={<PageLoading />}>
+                <Dashboard />
+              </Suspense>
+            }
+          />
+          <Route
+            path="employees"
+            element={<ModulePage moduleKey="employees" />}
+          />
+          <Route
+            path="attendance"
+            element={<ModulePage moduleKey="attendance" />}
+          />
           <Route path="leave" element={<ModulePage moduleKey="leave" />} />
           <Route path="payroll" element={<ModulePage moduleKey="payroll" />} />
-          <Route path="recruitment" element={<ModulePage moduleKey="recruitment" />} />
-          <Route path="performance" element={<ModulePage moduleKey="performance" />} />
-          <Route path="operations" element={<Suspense fallback={<PageLoading />}><OperationsPage /></Suspense>} />
+          <Route
+            path="recruitment"
+            element={<ModulePage moduleKey="recruitment" />}
+          />
+          <Route
+            path="performance"
+            element={<ModulePage moduleKey="performance" />}
+          />
+          <Route
+            path="operations"
+            element={
+              <Suspense fallback={<PageLoading />}>
+                <OperationsPage />
+              </Suspense>
+            }
+          />
         </Route>
         <Route path="/employee" element={<EmployeeLayout />} />
-        <Route path="*" element={<Navigate to={user?.role === "employee" ? "/employee" : user ? "/" : "/login"} replace />} />
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to={
+                user?.role === "employee" ? "/employee" : user ? "/" : "/login"
+              }
+              replace
+            />
+          }
+        />
       </Routes>
     </ToastProvider>
   );

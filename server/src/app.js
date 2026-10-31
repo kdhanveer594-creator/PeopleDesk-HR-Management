@@ -18,9 +18,13 @@ const projectRoot = path.resolve(currentDir, "../..");
 
 app.disable("x-powered-by");
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
-app.use(cors({
-  origin: process.env.CLIENT_ORIGIN ? process.env.CLIENT_ORIGIN.split(",").map((origin) => origin.trim()) : "http://localhost:5173",
-}));
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN
+      ? process.env.CLIENT_ORIGIN.split(",").map((origin) => origin.trim())
+      : "http://localhost:5173",
+  }),
+);
 app.use(express.json({ limit: "100kb" }));
 app.get("/api/health", (req, res) => {
   const connected = mongoose.connection.readyState === 1;
@@ -31,8 +35,20 @@ app.get("/api/health", (req, res) => {
 });
 app.use("/api/auth", authRoutes);
 app.use("/api/operations", requireAuth, auditChanges, operationsRoutes);
-app.use("/api/employee-portal", requireAuth, requireRole("employee"), auditChanges, employeePortalRoutes);
-app.use("/api", requireAuth, requireRole("admin", "hr"), auditChanges, hrRoutes);
+app.use(
+  "/api/employee-portal",
+  requireAuth,
+  requireRole("employee"),
+  auditChanges,
+  employeePortalRoutes,
+);
+app.use(
+  "/api",
+  requireAuth,
+  requireRole("admin", "hr"),
+  auditChanges,
+  hrRoutes,
+);
 
 const productionAssets = path.join(projectRoot, "dist");
 if (process.env.NODE_ENV === "production") {

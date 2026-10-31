@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from "react";
 
 const ToastContext = createContext(null);
 
@@ -9,11 +15,17 @@ export function ToastProvider({ children }) {
     setToasts((current) => current.filter((toast) => toast.id !== id));
   }, []);
 
-  const addToast = useCallback((message, type = "info") => {
-    const id = typeof crypto !== "undefined" && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
-    setToasts((current) => [...current, { id, message, type }]);
-    window.setTimeout(() => removeToast(id), 3000);
-  }, [removeToast]);
+  const addToast = useCallback(
+    (message, type = "info") => {
+      const id =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random()}`;
+      setToasts((current) => [...current, { id, message, type }]);
+      window.setTimeout(() => removeToast(id), 3000);
+    },
+    [removeToast],
+  );
 
   const value = useMemo(() => ({ addToast }), [addToast]);
 

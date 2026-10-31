@@ -183,7 +183,7 @@ The **Forgot password?** link is available on both sign-in portals. Configure th
 | `SMTP_PASSWORD` | SMTP password or provider-issued app password |
 | `MAIL_FROM` | Verified sender address, e.g. `PeopleDesk <no-reply@example.com>` |
 
-Use credentials from an email provider that permits application SMTP sending, and keep the SMTP password in your environment file or hosting provider secrets. Reset links are single-use, expire after 30 minutes, and are stored only as SHA-256 hashes. Requests are rate-limited and use a generic response to avoid confirming whether an email belongs to an account. For local development without SMTP, set `DEV_PASSWORD_RESET=true`, restart the API, and submit the reset request from `localhost`; the browser will show a local one-time link only when the email and portal match an account. Never enable this option in a deployed environment. In production, configure SMTP instead. A successful password reset invalidates that account's existing sessions; signing out revokes the current JWT.
+Use credentials from an email provider that permits application SMTP sending, and keep the SMTP password in your environment file or hosting provider secrets. SMTP is optional for deployment, but password-reset emails are unavailable until all SMTP settings are configured. Reset links are single-use, expire after 30 minutes, and are stored only as SHA-256 hashes. Requests are rate-limited and use a generic response to avoid confirming whether an email belongs to an account. For local development without SMTP, set `DEV_PASSWORD_RESET=true`, restart the API, and submit the reset request from `localhost`; the browser will show a local one-time link only when the email and portal match an account. Never enable this option in a deployed environment. In production, configure SMTP to enable password reset by email. A successful password reset invalidates that account's existing sessions; signing out revokes the current JWT.
 
 ## Production deployment
 
@@ -211,7 +211,7 @@ This project can be deployed as one Node.js web service: Express serves both the
 
 ### 3. Deploy the web service
 
-1. In Render, use **New > Blueprint** and select this repository to apply `render.yaml`. The Blueprint generates `JWT_SECRET` and prompts for the other service values. Set `CLIENT_ORIGIN` and `APP_URL` to the final service origin. Alternatively, create a **Web Service** manually, connect the GitHub repository, and select the production branch.
+1. In Render, use **New > Blueprint** and select this repository to apply `render.yaml`. The Blueprint generates `JWT_SECRET` and prompts for `MONGODB_URI`, `CLIENT_ORIGIN`, and `APP_URL`. Set the origin values to the final service URL. SMTP is optional and can be added later to enable password-reset email. Alternatively, create a **Web Service** manually, connect the GitHub repository, and select the production branch.
 2. Configure:
 
    | Setting | Value |
@@ -233,9 +233,8 @@ This project can be deployed as one Node.js web service: Express serves both the
    | `JWT_EXPIRES_IN` | `8h`, or your chosen session lifetime |
    | `CLIENT_ORIGIN` | The exact deployed site origin, e.g. `https://your-service.onrender.com` |
    | `APP_URL` | The exact deployed site origin, e.g. `https://your-service.onrender.com` |
-   | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE` | Your SMTP provider's connection settings |
-   | `SMTP_USER`, `SMTP_PASSWORD` | Private SMTP credentials stored as host secrets |
-   | `MAIL_FROM` | A sender address verified by your email provider |
+
+   To enable password-reset email, also configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, and `MAIL_FROM`. Store SMTP credentials as hosting-provider secrets.
 
    Generate a JWT secret locally with:
 

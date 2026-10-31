@@ -14,7 +14,9 @@ export default function ThemeToggle() {
       title={`Switch to ${nextTheme} mode`}
       onClick={toggleTheme}
     >
-      <span className="theme-switch-track" aria-hidden="true"><span /></span>
+      <span className="theme-switch-track" aria-hidden="true">
+        <span />
+      </span>
       <span>{theme === "dark" ? "Dark" : "Light"} mode</span>
     </button>
   );

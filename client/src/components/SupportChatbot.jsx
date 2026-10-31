@@ -8,7 +8,10 @@ const suggestions = [
 
 function getAnswer(question) {
   const text = question.toLowerCase();
-  if (/\b(employee|employees|team member|staff)\b/.test(text) && /\b(add|create|new|register)\b/.test(text)) {
+  if (
+    /\b(employee|employees|team member|staff)\b/.test(text) &&
+    /\b(add|create|new|register)\b/.test(text)
+  ) {
     return "Open Employees in the sidebar and choose “Add employee.” Complete the employee details and save. To give them a portal login, set EMPLOYEE_EMAIL and EMPLOYEE_PASSWORD in your local .env, then run npm run create:employee-user.";
   }
   if (/\b(leave|time off|holiday)\b/.test(text)) {
@@ -26,7 +29,11 @@ function getAnswer(question) {
   if (/\b(performance|review|feedback|rating)\b/.test(text)) {
     return "Open Performance to create a review, choose the employee, enter the review period and reviewer, then add a rating and feedback.";
   }
-  if (/\b(logins?|sign.?in|password|account|employee portal|hr portal)\b/.test(text)) {
+  if (
+    /\b(logins?|sign.?in|password|account|employee portal|hr portal)\b/.test(
+      text,
+    )
+  ) {
     return "HR and administrators sign in at /login. Employees use /employee-login. Accounts are individually provisioned by an administrator; employees cannot self-register. Use Forgot password? on either sign-in page to request a reset link.";
   }
   if (/\b(chart|graph|dashboard|analytics)\b/.test(text)) {
@@ -47,7 +54,13 @@ export default function SupportChatbot({ open, onClose, onOpen }) {
   useEffect(() => {
     if (!open) return;
     if (!messages.length) {
-      setMessages([{ id: "welcome", author: "bot", text: "Hi! I’m the PeopleDesk support assistant. What can I help you with?" }]);
+      setMessages([
+        {
+          id: "welcome",
+          author: "bot",
+          text: "Hi! I’m the PeopleDesk support assistant. What can I help you with?",
+        },
+      ]);
     }
     inputRef.current?.focus();
   }, [open, messages.length]);
@@ -80,26 +93,94 @@ export default function SupportChatbot({ open, onClose, onOpen }) {
 
   return (
     <>
-      {open && <section className="support-chat" role="dialog" aria-label="PeopleDesk support chatbot">
-        <header className="support-chat-header">
-          <span className="support-chat-avatar">P</span>
-          <span className="support-chat-heading"><strong>PeopleDesk support</strong><small><i /> Help assistant</small></span>
-          <button type="button" className="support-chat-close" onClick={onClose} aria-label="Close support chat">×</button>
-        </header>
-        <div className="support-chat-messages" ref={messageListRef} aria-live="polite">
-          {messages.map((message) => <div key={message.id} className={`support-message ${message.author}`}>{message.text}</div>)}
-          <div className="support-chat-suggestions">
-            {suggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => sendMessage(suggestion)}>{suggestion}</button>)}
+      {open && (
+        <section
+          className="support-chat"
+          role="dialog"
+          aria-label="PeopleDesk support chatbot"
+        >
+          <header className="support-chat-header">
+            <span className="support-chat-avatar">P</span>
+            <span className="support-chat-heading">
+              <strong>PeopleDesk support</strong>
+              <small>
+                <i /> Help assistant
+              </small>
+            </span>
+            <button
+              type="button"
+              className="support-chat-close"
+              onClick={onClose}
+              aria-label="Close support chat"
+            >
+              ×
+            </button>
+          </header>
+          <div
+            className="support-chat-messages"
+            ref={messageListRef}
+            aria-live="polite"
+          >
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`support-message ${message.author}`}
+              >
+                {message.text}
+              </div>
+            ))}
+            <div className="support-chat-suggestions">
+              {suggestions.map((suggestion) => (
+                <button
+                  key={suggestion}
+                  type="button"
+                  onClick={() => sendMessage(suggestion)}
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-        <form className="support-chat-form" onSubmit={(event) => { event.preventDefault(); sendMessage(); }}>
-          <input ref={inputRef} value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="Ask a question…" aria-label="Type your support question" maxLength={500} />
-          <button type="submit" disabled={!draft.trim()} aria-label="Send message">↑</button>
-        </form>
-        <a className="support-chat-email" href="mailto:support@peopledesk.example">Still need help? Email support</a>
-      </section>}
-      <button type="button" className={`support-chat-launcher ${open ? "chat-open" : ""}`} onClick={open ? onClose : onOpen} aria-label={open ? "Close support chat" : "Open support chat"} aria-expanded={open}>
-        <span aria-hidden="true">{open ? "×" : "✳"}</span>{!open && <small>Support</small>}
+          <form
+            className="support-chat-form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              sendMessage();
+            }}
+          >
+            <input
+              ref={inputRef}
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              placeholder="Ask a question…"
+              aria-label="Type your support question"
+              maxLength={500}
+            />
+            <button
+              type="submit"
+              disabled={!draft.trim()}
+              aria-label="Send message"
+            >
+              ↑
+            </button>
+          </form>
+          <a
+            className="support-chat-email"
+            href="mailto:support@peopledesk.example"
+          >
+            Still need help? Email support
+          </a>
+        </section>
+      )}
+      <button
+        type="button"
+        className={`support-chat-launcher ${open ? "chat-open" : ""}`}
+        onClick={open ? onClose : onOpen}
+        aria-label={open ? "Close support chat" : "Open support chat"}
+        aria-expanded={open}
+      >
+        <span aria-hidden="true">{open ? "×" : "✳"}</span>
+        {!open && <small>Support</small>}
       </button>
     </>
   );
